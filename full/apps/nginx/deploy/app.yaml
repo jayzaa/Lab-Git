@@ -17,3 +17,14 @@ spec:
         image: nginx:latest # Use the desired Nginx image
         ports:
         - containerPort: 80
+        volumeMounts:
+        - name: custom-config
+          mountPath: /etc/nginx/conf.d/custom.conf
+          subPath: custom.conf
+      volumes:
+      - name: custom-config
+        configMap:
+          name: nginx-custom-configuration
+          items:
+          - key: custom.conf
+            path: custom.conf

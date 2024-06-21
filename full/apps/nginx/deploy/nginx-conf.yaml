@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-custom-configuration
+  labels:
+    app: nginx-jay
+data:
+  custom.conf: |
+    server {
+        listen 80 default_server;
+        server_name _;
+        location / {
+            return 200 'hello this is on Cluster';
+            add_header Content-Type text/plain;
+        }
+    }
