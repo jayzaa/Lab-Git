@@ -1,0 +1,4 @@
+resources:
+  - deploy/deployment.yaml
+  - deploy/service.yaml
+  - deploy/app.yaml
