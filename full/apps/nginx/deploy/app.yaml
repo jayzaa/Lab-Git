@@ -20,6 +20,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: nginx-ingress-controller
+            name: nginx-svc
             port:
               number: 80

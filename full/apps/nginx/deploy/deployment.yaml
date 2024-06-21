@@ -1,37 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-ingress-controller
+  name: nginx-deployment
   labels:
-    app: nginx-ingress
+    app: nginx
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: nginx-ingress
+      app: nginx
   template:
     metadata:
       labels:
-        app: nginx-ingress
+        app: nginx
     spec:
       containers:
-      - name: nginx-ingress-controller
-        image: k8s.gcr.io/ingress-nginx/controller:latest
-        args:
-        - /nginx-ingress-controller
-        - --configmap=$(POD_NAMESPACE)/nginx-configuration
+      - name: nginx
+        image: nginx:latest
         ports:
         - containerPort: 80
         - containerPort: 443
-        env:
-        - name: POD_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
-        - name: POD_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
         resources:
           requests:
             cpu: "100m"
