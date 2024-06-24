@@ -1,3 +1,13 @@
+# PHP ConfigMap for php.ini
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: php-config
+data:
+  php.ini: |
+    [PHP]
+    short_open_tag = On
+
 # PHP-FPM Deployment and Service
 ---
 apiVersion: apps/v1
@@ -24,7 +34,24 @@ spec:
         volumeMounts:
         - name: app-storage-volume
           mountPath: /usr/share/nginx/html
+        - name: php-config-volume
+          mountPath: /usr/local/etc/php/php.ini
+          subPath: php.ini
       volumes:
       - name: app-storage-volume
         persistentVolumeClaim:
           claimName: app-storage-pvc
+      - name: php-config-volume
+        configMap:
+          name: php-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: php-service
+spec:
+  ports:
+  - port: 9001
+    targetPort: 9001
+  selector:
+    app: php

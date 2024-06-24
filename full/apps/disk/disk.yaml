@@ -1,3 +1,15 @@
+# PersistentVolumeClaim for storage
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: app-storage-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+
 # Job for initializing storage
 ---
 apiVersion: batch/v1
