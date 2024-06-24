@@ -1,5 +1,8 @@
 resources:
-  - nginx/deploy/app.yaml
-  - nginx/deploy/service.yaml
-  - nginx/deploy/ingress.yaml
-  - nginx/deploy/nginx-conf.yaml
+  - nginx/app.yaml
+  - nginx/service.yaml
+  - nginx/ingress.yaml
+  - nginx/nginx-conf.yaml
+  - php/app.yaml
+  - php/service.yaml
+  - php/php-conf.yaml

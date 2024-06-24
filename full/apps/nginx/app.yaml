@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-jay
+  name: nginx
 spec:
   replicas: 1 
   selector:
@@ -18,13 +18,23 @@ spec:
         ports:
         - containerPort: 80
         volumeMounts:
+        - name: html-volume
+          mountPath: /usr/share/nginx/html
+        - name: php-index-volume
+          mountPath: /usr/share/nginx/html/index.php
+          subPath: index.php
         - name: custom-config
           mountPath: /etc/nginx/conf.d/custom.conf
           subPath: custom.conf
       volumes:
+      - name: html-volume
+        emptyDir: {}
       - name: custom-config
         configMap:
           name: nginx-custom-configuration
           items:
           - key: custom.conf
             path: custom.conf
+      - name: php-index-volume
+        configMap:
+          name: php-index-config
