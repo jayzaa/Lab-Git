@@ -4,7 +4,7 @@ metadata:
   name: php-service
 spec:
   ports:
-  - port: 9000
-    targetPort: 9000
+  - port: 9001
+    targetPort: 9001
   selector:
     app: php

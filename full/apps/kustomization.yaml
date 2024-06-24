@@ -1,8 +1,7 @@
 resources:
   - nginx/app.yaml
-  - nginx/service.yaml
-  - nginx/ingress.yaml
-  - nginx/nginx-conf.yaml
+  - nginx/app-create-service.yaml
+  - nginx/config-map.yaml
   - php/app.yaml
-  - php/service.yaml
-  - php/php-conf.yaml
+  - php/app-create-service.yaml
+  - storage/storage.yaml

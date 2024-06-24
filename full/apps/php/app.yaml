@@ -18,4 +18,11 @@ spec:
       - name: php
         image: php:8.2-fpm
         ports:
-        - containerPort: 9000
+        - containerPort: 9001
+        volumeMounts:
+        - name: app-storage-volume
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: app-storage-volume
+        persistentVolumeClaim:
+          claimName: app-storage-pvc

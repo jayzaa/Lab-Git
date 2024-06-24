@@ -1,9 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx
+  name: nginx-deployment
+  labels:
+    app: nginx
 spec:
-  replicas: 1 
+  replicas: 1
   selector:
     matchLabels:
       app: nginx
@@ -14,27 +16,19 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginx:latest # Use the desired Nginx image
+        image: nginx:latest
         ports:
         - containerPort: 80
         volumeMounts:
-        - name: html-volume
-          mountPath: /usr/share/nginx/html
-        - name: php-index-volume
-          mountPath: /usr/share/nginx/html/index.php
-          subPath: index.php
-        - name: custom-config
-          mountPath: /etc/nginx/conf.d/custom.conf
-          subPath: custom.conf
+        - mountPath: /usr/share/nginx/html
+          name: app-storage-volume
+        - name: nginx-config-volume
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
       volumes:
-      - name: html-volume
-        emptyDir: {}
-      - name: custom-config
+      - name: app-storage-volume
+        persistentVolumeClaim:
+          claimName: app-storage-pvc
+      - name: nginx-config-volume
         configMap:
-          name: nginx-custom-configuration
-          items:
-          - key: custom.conf
-            path: custom.conf
-      - name: php-index-volume
-        configMap:
-          name: php-index-config
+          name: nginx-config
