@@ -1,2 +1,2 @@
 resources:
-- apps/kustomization.yaml
+- apps/nginx/kustomization.yaml

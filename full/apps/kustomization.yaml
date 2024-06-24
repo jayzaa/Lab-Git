@@ -1,2 +1,5 @@
 resources:
-- nginx/kustomization.yaml
+  - nginx/deploy/app.yaml
+  - nginx/deploy/service.yaml
+  - nginx/deploy/ingress.yaml
+  - nginx/deploy/nginx-conf.yaml
