@@ -154,6 +154,7 @@ spec:
         volumeMounts:
         - mountPath: /usr/share/nginx/html
           name: app-storage-volume
+          
       containers:
       - name: php
         image: php:8.2-fpm
