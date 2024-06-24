@@ -1,0 +1,10 @@
+# PHP ConfigMap for php.ini
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: php-config
+data:
+  php.ini: |
+    [PHP]
+    short_open_tag = On
