@@ -62,6 +62,17 @@ data:
       }
     }
 
+# PHP ConfigMap for php.ini
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: php-config
+data:
+  php.ini: |
+    [PHP]
+    short_open_tag = On
+
 # Nginx Deployment and Service
 ---
 apiVersion: apps/v1
@@ -80,6 +91,13 @@ spec:
       labels:
         app: nginx
     spec:
+      initContainers:
+      - name: wait-for-storage
+        image: busybox
+        command: ['sh', '-c', 'while [ ! -d /usr/share/nginx/html ]; do echo "Waiting for storage initialization..."; sleep 5; done']
+        volumeMounts:
+        - mountPath: /usr/share/nginx/html
+          name: app-storage-volume
       containers:
       - name: nginx
         image: nginx:latest
@@ -111,17 +129,6 @@ spec:
   selector:
     app: nginx
 
-# PHP ConfigMap for php.ini
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: php-config
-data:
-  php.ini: |
-    [PHP]
-    short_open_tag = On
-
 # PHP-FPM Deployment and Service
 ---
 apiVersion: apps/v1
@@ -140,6 +147,13 @@ spec:
       labels:
         app: php
     spec:
+      initContainers:
+      - name: wait-for-storage
+        image: busybox
+        command: ['sh', '-c', 'while [ ! -d /usr/share/nginx/html ]; do echo "Waiting for storage initialization..."; sleep 5; done']
+        volumeMounts:
+        - mountPath: /usr/share/nginx/html
+          name: app-storage-volume
       containers:
       - name: php
         image: php:8.2-fpm
