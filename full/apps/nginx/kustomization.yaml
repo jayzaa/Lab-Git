@@ -1,5 +1,0 @@
-#resources:
-#  - deploy/app.yaml
-#  - deploy/service.yaml
-#  - deploy/ingress.yaml
-#  - deploy/nginx-conf.yaml
