@@ -10,7 +10,7 @@ data:
         listen 80 default_server;
         server_name _;
         location / {
-            return 200 'hello this is on Cluster';
+            return 200 'Hello';
             add_header Content-Type text/plain;
         }
     }
