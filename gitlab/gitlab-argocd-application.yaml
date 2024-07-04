@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://your.git.repo.url'
+    repoURL: 'https://github.com/jayzaa/Lab-Git/tree/main/gitlab/gitlab'
     targetRevision: HEAD
     path: gitlab
   destination:
