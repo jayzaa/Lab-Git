@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: gitlab-config
-  namespace: gitlab
-data:
-  GITLAB_OMNIBUS_CONFIG: |
-    external_url 'http://git.lab.clubzap.org'
