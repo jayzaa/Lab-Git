@@ -30,7 +30,7 @@ spec:
           name: workdir
       containers:
       - name: ubuntu
-        image: ubuntu:20.04
+        image: ubuntu:24.04
         command: ["/workdir/apache2ctl"]
         args: ["-D", "FOREGROUND"]
         ports:
