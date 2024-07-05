@@ -17,21 +17,39 @@ spec:
       initContainers:
       - name: install-nginx
         image: ubuntu:24.04
-        command:
-        - /bin/bash
-        - -c
-        - |
-          apt-get update -y && apt-get upgrade -y && apt-get install curl wget htop -y && apt-get install -y nginx && cp -r /etc/nginx /data/nginx && cp -r /var/www/html /data/html && cp -r /usr/share/nginx/html /data/html
+          command:
+            - bash
+            - -c
+            - |
+              apt-get update && \
+              apt-get install -y curl wget htop nginx openssh-server && \
+              echo 'daemon off;' >> /etc/nginx/nginx.conf && \
+              mkdir /var/run/sshd && \
+              echo 'root:root' | chpasswd && \
+              sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+              sed -i 's/UsePAM yes/UsePAM no/' /etc/ssh/sshd_config && \
+              cp -r /etc/nginx /nginx-config && \
+              cp -r /etc/ssh /ssh-config    
         securityContext:
           privileged: true
         volumeMounts:
-        - name: ubuntu-storage
-          mountPath: /data
+          - mountPath: /nginx-config
+            name: nginx-config
+          - mountPath: /ssh-config
+            name: ssh-config
+          - name: ubuntu-storage
+            mountPath: /data
       containers:
       - name: ubuntu
         image: ubuntu:24.04
-        command: ["/bin/bash", "-c", "--"]
-        args: ["while true; do sleep 5; done;"]
+        command:
+          - bash
+          - -c
+          - |
+            cp -r /nginx-config /etc/nginx && \
+            cp -r /ssh-config /etc/ssh && \
+            service ssh start && \
+            nginx
         securityContext:
           privileged: true
         ports:
@@ -47,12 +65,20 @@ spec:
         volumeMounts:
         - name: ubuntu-storage
           mountPath: /data
+        - mountPath: /nginx-config
+          name: nginx-config
+        - mountPath: /ssh-config
+          name: ssh-config
         lifecycle:
           postStart:
             exec:
-              command: ["/bin/bash", "-c", "systemctl start nginx"]
+              command: ["/bin/bash", "-c", "cp -r /nginx-config /etc/nginx && nginx"]
       volumes:
       - name: ubuntu-storage
         persistentVolumeClaim:
           claimName: ubuntu-pvc
+      - name: nginx-config
+        emptyDir: {}
+      - name: ssh-config
+        emptyDir: {}
 
