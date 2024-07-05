@@ -1,4 +1,105 @@
 apiVersion: v1
+kind: PersistentVolume
+metadata:
+  annotations:
+    pv.kubernetes.io/bound-by-controller: 'yes'
+    deploymentTimestamp: "{{ now }}"
+  finalizers:
+    - kubernetes.io/pv-protection
+  labels:
+    alicloud-pvname: alyn-oss-appcenter-ubuntu
+  managedFields:
+    - apiVersion: v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:labels':
+            .: {}
+            'f:alicloud-pvname': {}
+        'f:spec':
+          'f:accessModes': {}
+          'f:capacity':
+            .: {}
+            'f:storage': {}
+          'f:csi':
+            .: {}
+            'f:driver': {}
+            'f:nodePublishSecretRef': {}
+            'f:volumeAttributes':
+              .: {}
+              'f:bucket': {}
+              'f:otherOpts': {}
+              'f:path': {}
+              'f:url': {}
+            'f:volumeHandle': {}
+          'f:persistentVolumeReclaimPolicy': {}
+          'f:storageClassName': {}
+          'f:volumeMode': {}
+      manager: ACK-Console Apache-HttpClient
+      operation: Update
+      time: '2024-07-05T07:38:54Z'
+    - apiVersion: v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:metadata':
+          'f:annotations':
+            .: {}
+            'f:pv.kubernetes.io/bound-by-controller': {}
+        'f:spec':
+          'f:claimRef':
+            .: {}
+            'f:apiVersion': {}
+            'f:kind': {}
+            'f:name': {}
+            'f:namespace': {}
+            'f:resourceVersion': {}
+            'f:uid': {}
+      manager: kube-controller-manager
+      operation: Update
+      time: '2024-07-05T07:48:52Z'
+    - apiVersion: v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        'f:status':
+          'f:phase': {}
+      manager: kube-controller-manager
+      operation: Update
+      subresource: status
+      time: '2024-07-05T08:07:24Z'
+  name: alyn-oss-appcenter-ubuntu
+  resourceVersion: '102777'
+  uid: 7834f0cd-f1a0-4f78-af48-a5ab0df687e5
+spec:
+  accessModes:
+    - ReadWriteMany
+  capacity:
+    storage: 40Gi
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: ubuntu-pvc
+    namespace: appcenter
+    resourceVersion: '96072'
+    uid: b9b58da3-0f25-41fb-9e09-c994c7f87e34
+  csi:
+    driver: ossplugin.csi.alibabacloud.com
+    nodePublishSecretRef:
+      name: alyn-oss-appcenter-ubuntu
+      namespace: appcenter
+    volumeAttributes:
+      bucket: alyn-oss-appcenter-ubuntu
+      otherOpts: ''
+      path: /data
+      url: oss-ap-southeast-1-internal.aliyuncs.com
+    volumeHandle: alyn-oss-appcenter-ubuntu
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: oss
+  volumeMode: Filesystem
+status:
+  lastPhaseTransitionTime: '2024-07-05T08:07:24Z'
+  phase: Released
+---
+apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: ubuntu-pvc
