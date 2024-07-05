@@ -18,7 +18,7 @@ spec:
     - IPv4
   ipFamilyPolicy: SingleStack
   selector:
-    app: ubuntu
+    app: amz
   ports:
     - protocol: TCP
       port: 80
