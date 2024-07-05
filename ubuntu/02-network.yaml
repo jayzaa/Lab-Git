@@ -21,12 +21,10 @@ spec:
     app: ubuntu
   ports:
     - protocol: TCP
-      nodePort: 30000
       port: 80
       name: http
       targetPort: 80
     - protocol: TCP
-      nodePort: 30001
       port: 22
       name: ssh
       targetPort: 22

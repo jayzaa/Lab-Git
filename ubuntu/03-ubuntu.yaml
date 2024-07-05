@@ -21,17 +21,22 @@ spec:
         - /bin/bash
         - -c
         - |
-          apt-get update -y && apt-get upgrade -y && apt-get install curl wget htop -y && apt-get install -y nginx && cp -r /etc/nginx /data/nginx && cp -r /var/www/html /data/html && cp -r /usr/share/nginx/html /data/html
+          apt-get update -y && apt-get upgrade -y && apt-get install curl wget htop -y && apt-get install -y nginx && cp -r /etc/nginx /data/nginx && cp -r /var/www/html /data/html && cp -r /usr/share/nginx/html /data/html && systemctl enable nginx && systemctl start nginx
+        securityContext:
+          privileged: true
         volumeMounts:
         - name: ubuntu-storage
           mountPath: /data
       containers:
       - name: ubuntu
         image: ubuntu:24.04
-        command: ["sleep", "infinity"]
+        command: ["/bin/bash", "-c", "--"]
+        args: ["while true; do sleep 30; done;"]
+        securityContext:
+          privileged: true
         ports:
-        - containerPort: 30000
-        - containerPort: 30001
+        - containerPort: 80
+        - containerPort: 22
         resources:
           limits:
             memory: "512Mi"
@@ -42,6 +47,10 @@ spec:
         volumeMounts:
         - name: ubuntu-storage
           mountPath: /data
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/bash", "-c", "systemctl start nginx"]
       volumes:
       - name: ubuntu-storage
         persistentVolumeClaim:

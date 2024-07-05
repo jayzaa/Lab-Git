@@ -4,6 +4,3 @@ resources:
   - 01-disk-reservation.yaml
   - 02-network.yaml
   - 03-ubuntu.yaml
-
-commonAnnotations:
-  deploymentTimestamp: "{{ now }}"
