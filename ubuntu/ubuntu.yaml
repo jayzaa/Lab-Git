@@ -1,96 +1,50 @@
-apiVersion: v1
-kind: Namespace
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: oslevel
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: oslevel-ubuntu-pv
+  name: ubuntu-deployment
+  labels:
+    app: ubuntu
 spec:
-  capacity:
-    storage: 20Gi
-  accessModes:
-    - ReadWriteMany
-  storageClassName: alibabacloud-cnfs-nas
-  csi:
-    driver: nasplugin.csi.alibabacloud.com
-    volumeHandle: oslevel-ubuntu-pv
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: oslevel-ubuntu
-  namespace: oslevel
-spec:
-  accessModes:
-    - ReadWriteMany
-  storageClassName: alibabacloud-cnfs-nas
-  resources:
-    requests:
-      storage: 20Gi
----
-apiVersion: v1
-kind: Pod
-metadata:
-  name: ubuntu
-  namespace: oslevel
-spec:
-  containers:
-  - name: ubuntu-container
-    image: ubuntu:24.04
-    command: ["sh", "-c", "sleep infinity"]
-    resources:
-      requests:
-        memory: "1Gi"
-        cpu: "1"
-      limits:
-        memory: "1Gi"
-        cpu: "1"
-    volumeMounts:
-    - mountPath: /scripts
-      name: install-scripts
-    - mountPath: /var/lib/mysql
-      name: mariadb-data
-    ports:
-    - containerPort: 22
-    - containerPort: 80
-    - containerPort: 443
-    - containerPort: 3306
-    - containerPort: 9000
-  initContainers:
-  - name: install-container
-    image: ubuntu:latest
-    command: ["/bin/bash", "-c"]
-    args:
-    - |
-      apt-get update && \
-      apt-get install -y nginx curl wget mariadb-server php5.6-fpm && \
-      cp /scripts/init.sh /init.sh && \
-      chmod +x /init.sh && \
-      /init.sh
-    volumeMounts:
-    - mountPath: /scripts
-      name: install-scripts
-    - mountPath: /var/lib/mysql
-      name: mariadb-data
-  volumes:
-  - name: install-scripts
-    configMap:
-      name: install-scripts
-  - name: mariadb-data
-    persistentVolumeClaim:
-      claimName: oslevel-ubuntu
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: install-scripts
-  namespace: oslevel
-data:
-  init.sh: |
-    #!/bin/bash
-    service mariadb start
-    service php5.6-fpm start
-    service nginx start
-    tail -f /dev/null
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ubuntu
+  template:
+    metadata:
+      labels:
+        app: ubuntu
+    spec:
+      initContainers:
+      - name: init-ubuntu
+        image: ubuntu:24.04
+        command:
+        - sh
+        - -c
+        - |
+          apt-get update && \
+          apt-get install -y curl apache2 htop && \
+          cp /usr/sbin/apache2ctl /workdir/apache2ctl && \
+          chmod +x /workdir/apache2ctl
+        volumeMounts:
+        - mountPath: /workdir
+          name: workdir
+      containers:
+      - name: ubuntu
+        image: ubuntu:20.04
+        command: ["/workdir/apache2ctl"]
+        args: ["-D", "FOREGROUND"]
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - mountPath: /workdir
+          name: workdir
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+      volumes:
+      - name: workdir
+        emptyDir: {}
