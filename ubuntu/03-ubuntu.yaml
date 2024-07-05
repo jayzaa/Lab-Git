@@ -17,19 +17,19 @@ spec:
       initContainers:
       - name: install-nginx
         image: ubuntu:24.04
-          command:
-            - bash
-            - -c
-            - |
-              apt-get update && \
-              apt-get install -y curl wget htop nginx openssh-server && \
-              echo 'daemon off;' >> /etc/nginx/nginx.conf && \
-              mkdir /var/run/sshd && \
-              echo 'root:root' | chpasswd && \
-              sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
-              sed -i 's/UsePAM yes/UsePAM no/' /etc/ssh/sshd_config && \
-              cp -r /etc/nginx /nginx-config && \
-              cp -r /etc/ssh /ssh-config    
+        command:
+          - bash
+          - -c
+          - |
+            apt-get update && \
+            apt-get install -y curl wget htop nginx openssh-server && \
+            echo 'daemon off;' >> /etc/nginx/nginx.conf && \
+            mkdir /var/run/sshd && \
+            echo 'root:root' | chpasswd && \
+            sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+            sed -i 's/UsePAM yes/UsePAM no/' /etc/ssh/sshd_config && \
+            cp -r /etc/nginx /nginx-config && \
+            cp -r /etc/ssh /ssh-config    
         securityContext:
           privileged: true
         volumeMounts:
