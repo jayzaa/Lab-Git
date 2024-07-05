@@ -21,7 +21,7 @@ spec:
         - /bin/bash
         - -c
         - |
-          apt-get update -y && apt-get upgrade -y && apt-get install curl wget htop -y && apt-get install -y nginx && cp -r /etc/nginx /data/nginx && cp -r /var/www/html /data/html && cp -r /usr/share/nginx/html /data/html && systemctl enable nginx && systemctl start nginx
+          apt-get update -y && apt-get upgrade -y && apt-get install curl wget htop -y && apt-get install -y nginx && cp -r /etc/nginx /data/nginx && cp -r /var/www/html /data/html && cp -r /usr/share/nginx/html /data/html
         securityContext:
           privileged: true
         volumeMounts:
@@ -31,7 +31,7 @@ spec:
       - name: ubuntu
         image: ubuntu:24.04
         command: ["/bin/bash", "-c", "--"]
-        args: ["while true; do sleep 30; done;"]
+        args: ["while true; do sleep 5; done;"]
         securityContext:
           privileged: true
         ports:
