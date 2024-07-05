@@ -16,7 +16,7 @@ spec:
     spec:
       initContainers:
       - name: init-ubuntu
-        image: ubuntu:24.04
+        image: ubuntu:latest
         command:
         - sh
         - -c
@@ -30,7 +30,7 @@ spec:
           name: workdir
       containers:
       - name: ubuntu
-        image: ubuntu:24.04
+        image: ubuntu:latest
         command: ["/workdir/apache2ctl"]
         args: ["-D", "FOREGROUND"]
         ports:
