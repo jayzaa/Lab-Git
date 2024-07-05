@@ -33,7 +33,7 @@ spec:
         - /bin/bash
         - -c
         - |
-          apt-get update && apt-get install -y nginx && cp -r /etc/nginx /data/nginx && cp -r /var/www/html /data/html
+          apt-get update && apt-get install -y nginx && cp -r /etc/nginx /data/nginx && cp -r /var/www/html /data/html && cp -r /usr/share/nginx/html /data/html
         volumeMounts:
         - name: ubuntu-storage
           mountPath: /data
