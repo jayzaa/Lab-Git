@@ -1,0 +1,89 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: oslevel
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: oslevel-ubuntu-pv
+spec:
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteMany
+  storageClassName: alibabacloud-cnfs-nas
+  csi:
+    driver: nasplugin.csi.alibabacloud.com
+    volumeHandle: oslevel-ubuntu-pv
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: oslevel-ubuntu
+  namespace: oslevel
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: alibabacloud-cnfs-nas
+  resources:
+    requests:
+      storage: 20Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ubuntu-custom
+  namespace: oslevel
+spec:
+  containers:
+  - name: ubuntu-container
+    image: ubuntu:latest
+    command: ["sh", "-c", "sleep infinity"]
+    volumeMounts:
+    - mountPath: /scripts
+      name: install-scripts
+    - mountPath: /var/lib/mysql
+      name: mariadb-data
+    ports:
+    - containerPort: 22
+    - containerPort: 80
+    - containerPort: 443
+    - containerPort: 3306
+    - containerPort: 9000
+  initContainers:
+  - name: install-container
+    image: ubuntu:latest
+    command: ["/bin/bash", "-c"]
+    args:
+    - |
+      apt-get update && \
+      apt-get install -y nginx curl wget mariadb-server php5.6-fpm && \
+      cp /scripts/init.sh /init.sh && \
+      chmod +x /init.sh && \
+      /init.sh
+    volumeMounts:
+    - mountPath: /scripts
+      name: install-scripts
+    - mountPath: /var/lib/mysql
+      name: mariadb-data
+  volumes:
+  - name: install-scripts
+    configMap:
+      name: install-scripts
+  - name: mariadb-data
+    persistentVolumeClaim:
+      claimName: oslevel-ubuntu
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: install-scripts
+  namespace: oslevel
+data:
+  init.sh: |
+    #!/bin/bash
+    service mariadb start
+    service php5.6-fpm start
+    service nginx start
+    tail -f /dev/null
