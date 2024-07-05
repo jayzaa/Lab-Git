@@ -14,29 +14,9 @@ spec:
       labels:
         app: ubuntu
     spec:
-      initContainers:
-      - name: install-nginx
-        image: ubuntu:24.04
-        command:
-          - bash
-          - -c
-          - |
-            apt-get update && \
-            apt-get install -y curl wget htop nginx openssh-server
-        securityContext:
-          privileged: true
-        volumeMounts:
-          - mountPath: /nginx-config
-            name: nginx-config
-          - mountPath: /ssh-config
-            name: ssh-config
-          - name: ubuntu-storage
-            mountPath: /data
       containers:
       - name: ubuntu
         image: ubuntu:24.04
-        securityContext:
-          privileged: true
         ports:
         - containerPort: 80
         - containerPort: 22
@@ -50,16 +30,8 @@ spec:
         volumeMounts:
         - name: ubuntu-storage
           mountPath: /data
-        - mountPath: /nginx-config
-          name: nginx-config
-        - mountPath: /ssh-config
-          name: ssh-config
       volumes:
       - name: ubuntu-storage
         persistentVolumeClaim:
           claimName: ubuntu-pvc
-      - name: nginx-config
-        emptyDir: {}
-      - name: ssh-config
-        emptyDir: {}
 
