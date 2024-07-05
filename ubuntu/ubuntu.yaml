@@ -1,3 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ubuntu-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: alicloud-oss
+  resources:
+    requests:
+      storage: 40Gi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,6 +26,17 @@ spec:
       labels:
         app: ubuntu
     spec:
+      initContainers:
+      - name: install-nginx
+        image: ubuntu:24.04
+        command:
+        - /bin/bash
+        - -c
+        - |
+          apt-get update && apt-get install -y nginx && cp -r /etc/nginx /data/nginx && cp -r /var/www/html /data/html
+        volumeMounts:
+        - name: ubuntu-storage
+          mountPath: /data
       containers:
       - name: ubuntu
         image: ubuntu:24.04
@@ -28,3 +51,28 @@ spec:
           requests:
             memory: "256Mi"
             cpu: "250m"
+        volumeMounts:
+        - name: ubuntu-storage
+          mountPath: /data
+      volumes:
+      - name: ubuntu-storage
+        persistentVolumeClaim:
+          claimName: ubuntu-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ubuntu-service
+  labels:
+    app: ubuntu
+spec:
+  selector:
+    app: ubuntu
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+    - protocol: TCP
+      port: 22
+      targetPort: 22
+  type: ClusterIP
