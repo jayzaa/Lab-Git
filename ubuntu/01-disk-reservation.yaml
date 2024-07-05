@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    pv.kubernetes.io/bound-by-controller: 'yes'
+  finalizers:
+    - kubernetes.io/pvc-protection
+  name: ubuntu-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: oss
+  selector:
+    matchLabels:
+      alicloud-pvname: ubuntu-oss-disk
+  resources:
+    requests:
+      storage: 20Gi
+  volumeMode: Filesystem
+  volumeName: ubuntu-oss-disk
+
