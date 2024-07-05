@@ -1,6 +1,7 @@
 # kustomization.yaml
 resources:
-  - 01-disk.yaml
+  - 00-disk.yaml
+  - 01-disk-reservation.yaml
   - 02-network.yaml
   - 03-ubuntu.yaml
 
