@@ -1,0 +1,8 @@
+# kustomization.yaml
+resources:
+  - 01-disk.yaml
+  - 02-network.yaml
+  - 03-ubuntu.yaml
+
+commonAnnotations:
+  deploymentTimestamp: "{{ now }}"
