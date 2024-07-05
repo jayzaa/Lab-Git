@@ -14,30 +14,13 @@ spec:
       labels:
         app: ubuntu
     spec:
-      initContainers:
-      - name: init-ubuntu
-        image: ubuntu:latest
-        command:
-        - sh
-        - -c
-        - |
-          apt-get update && \
-          apt-get install -y curl apache2 htop && \
-          cp /usr/sbin/apache2ctl /workdir/apache2ctl && \
-          chmod +x /workdir/apache2ctl
-        volumeMounts:
-        - mountPath: /workdir
-          name: workdir
       containers:
       - name: ubuntu
-        image: ubuntu:latest
-        command: ["/workdir/apache2ctl"]
-        args: ["-D", "FOREGROUND"]
+        image: ubuntu:24.04
+        command: ["sleep", "infinity"]
         ports:
         - containerPort: 80
-        volumeMounts:
-        - mountPath: /workdir
-          name: workdir
+        - containerPort: 22
         resources:
           limits:
             memory: "512Mi"
@@ -45,6 +28,3 @@ spec:
           requests:
             memory: "256Mi"
             cpu: "250m"
-      volumes:
-      - name: workdir
-        emptyDir: {}
