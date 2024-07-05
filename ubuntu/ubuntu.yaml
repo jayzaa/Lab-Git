@@ -10,6 +10,24 @@ spec:
     requests:
       storage: 40Gi
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ubuntu-service
+  labels:
+    app: ubuntu
+spec:
+  selector:
+    app: ubuntu
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+    - protocol: TCP
+      port: 22
+      targetPort: 22
+  type: ClusterIP
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -58,21 +76,4 @@ spec:
       - name: ubuntu-storage
         persistentVolumeClaim:
           claimName: ubuntu-pvc
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: ubuntu-service
-  labels:
-    app: ubuntu
-spec:
-  selector:
-    app: ubuntu
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 80
-    - protocol: TCP
-      port: 22
-      targetPort: 22
-  type: ClusterIP
+
