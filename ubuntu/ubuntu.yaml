@@ -33,13 +33,20 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: ubuntu-custom
+  name: ubuntu
   namespace: oslevel
 spec:
   containers:
   - name: ubuntu-container
     image: ubuntu:latest
     command: ["sh", "-c", "sleep infinity"]
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: "1"
+      limits:
+        memory: "1Gi"
+        cpu: "1"
     volumeMounts:
     - mountPath: /scripts
       name: install-scripts
