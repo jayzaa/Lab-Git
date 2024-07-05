@@ -20,7 +20,6 @@ spec:
     namespace: appcenter
   csi:
     driver: ossplugin.csi.alibabacloud.com
-    otherOpts: "-o max_stat_cache_size=0 -o allow_other"
     nodePublishSecretRef:
       name: alyn-oss-appcenter-ubuntu
       namespace: appcenter
