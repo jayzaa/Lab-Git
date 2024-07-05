@@ -1,0 +1,4 @@
+# kustomization.yaml
+resources:
+  - 02-network.yaml
+  - 03-guestbook.yaml
