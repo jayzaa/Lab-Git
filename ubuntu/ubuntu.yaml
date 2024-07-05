@@ -38,7 +38,7 @@ metadata:
 spec:
   containers:
   - name: ubuntu-container
-    image: ubuntu:latest
+    image: ubuntu:24.04
     command: ["sh", "-c", "sleep infinity"]
     resources:
       requests:
