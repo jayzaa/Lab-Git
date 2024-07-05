@@ -1,12 +1,60 @@
+
+
+#Assign Persistent Volume - Before Claim to Container
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  annotations:
+    pv.kubernetes.io/bound-by-controller: 'yes'
+  finalizers:
+    - kubernetes.io/pv-protection
+  labels:
+    alicloud-pvname: ubuntu-oss-disk
+  name: ubuntu-oss-disk
+spec:
+  accessModes:
+    - ReadWriteMany
+  capacity:
+    storage: 20Gi
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: ubuntu-pvc
+    namespace: appcenter
+  csi:
+    driver: ossplugin.csi.alibabacloud.com
+    otherOpts: "-o max_stat_cache_size=0 -o allow_other"
+    nodePublishSecretRef:
+      name: alyn-oss-appcenter-ubuntu
+      namespace: appcenter
+    volumeAttributes:
+      bucket: alyn-oss-appcenter-ubuntu
+      otherOpts: ''
+      path: /data
+      url: oss-ap-southeast-1-internal.aliyuncs.com
+    volumeHandle: ubuntu-oss-disk
+  storageClassName: oss
+  volumeMode: Filesystem
+---
+#Mount
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  annotations:
+    pv.kubernetes.io/bound-by-controller: 'yes'
+  finalizers:
+    - kubernetes.io/pvc-protection
   name: ubuntu-pvc
 spec:
   accessModes:
     - ReadWriteMany
   storageClassName: oss
+  selector:
+    matchLabels:
+      alicloud-pvname: ubuntu-oss-disk
   resources:
     requests:
-      storage: 40Gi
-  volumeName: alyn-oss-appcenter-ubuntu
+      storage: 20Gi
+  volumeMode: Filesystem
+  volumeName: ubuntu-oss-disk
+
