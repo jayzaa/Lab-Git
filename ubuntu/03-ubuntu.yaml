@@ -30,8 +30,8 @@ spec:
         image: ubuntu:24.04
         command: ["sleep", "infinity"]
         ports:
-        - containerPort: 80
-        - containerPort: 22
+        - containerPort: 30000
+        - containerPort: 30001
         resources:
           limits:
             memory: "512Mi"
