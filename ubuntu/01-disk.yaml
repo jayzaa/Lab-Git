@@ -103,8 +103,6 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: ubuntu-pvc
-  annotations:
-    deploymentTimestamp: "{{ now }}"
 spec:
   accessModes:
     - ReadWriteMany
@@ -112,3 +110,4 @@ spec:
   resources:
     requests:
       storage: 40Gi
+  volumeName: alyn-oss-appcenter-ubuntu
