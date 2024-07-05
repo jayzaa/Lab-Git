@@ -1,0 +1,6 @@
+# kustomization.yaml
+resources:
+  - 00-disk.yaml
+  - 01-disk-reservation.yaml
+  - 02-network.yaml
+  - 03-amz.yaml

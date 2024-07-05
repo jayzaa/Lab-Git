@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: amz-os
+  labels:
+    app: amz
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: amz
+  template:
+    metadata:
+      labels:
+        app: amz
+    spec:
+      containers:
+      - name: amz
+        image: amazonlinux:latest
+        command: ["sleep", "infinity"]
+        ports:
+        - containerPort: 80
+        - containerPort: 22
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+        volumeMounts:
+        - name: amz-storage
+          mountPath: /data
+      volumes:
+      - name: amz-storage
+        persistentVolumeClaim:
+          claimName: amz-pvc
+
