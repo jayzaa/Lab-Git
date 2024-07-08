@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: velero-config
+  namespace: velero
+data:
+  storage-location: |
+    [default]
+    region = ap-southeast-1
+    storageAccount = alyn-velero-backup
+    endpoint = https://oss-ap-southeast-1-internal.aliyuncs.com
