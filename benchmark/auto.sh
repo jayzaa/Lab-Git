@@ -1,7 +1,7 @@
 #!/bin/bash
 sudo apt update -y;
 sudo apt upgrade -y;
-sudo apt install -y apt-transport-https lsb-release ca-certificates wget curl ;
+sudo apt install -y apt-transport-https lsb-release ca-certificates wget curl wrk;
 #Add PHP8 Repo
 wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg;
 echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/php.list ;
@@ -58,7 +58,7 @@ composer require phasync/server;
 
 #Place Script
 # Create server.php with the provided content
-cat << 'EOF' > /root/php-server/server.php
+cat << 'EOF' > /tmp/server-test/server.php
 <?php
 
 echo "Starting server...\n";
@@ -99,5 +99,40 @@ while (true) {
     }
 }
 EOF
+cat << 'EOF' > /tmp/server-test/server-async.php
+<?php
+require __DIR__ . '/vendor/autoload.php';
 
-php /tmp/server-test/server.php & node server.js;
+phasync::run(function () {
+    $context = stream_context_create([
+        'socket' => [
+            'backlog' => 511,
+            'tcp_nodelay' => true,
+        ]
+    ]);
+    $socket = stream_socket_server('tcp://0.0.0.0:8082', $errno, $errstr, STREAM_SERVER_BIND | STREAM_SERVER_LISTEN, $context);
+    if (!$socket) {
+        die("Could not create socket: $errstr ($errno)");
+    }
+    stream_set_chunk_size($socket, 65536);
+    while (true) {        
+        phasync::readable($socket);     // Wait for activity on the server socket, while allowing coroutines to run
+        if (!($client = stream_socket_accept($socket, 0))) {
+            break;
+        }
+        
+        phasync::go(function () use ($client) {
+            //phasync::sleep();           // this single sleep allows the server to accept slightly more connections before reading and writing
+            phasync::readable($client); // pause coroutine until resource is readable
+            $request = \fread($client, 32768);
+            phasync::writable($client); // pause coroutine until resource is writable
+            $written = fwrite($client,
+                "HTTP/1.1 200 OK\r\nConnection: close\r\nContent-Type: text/plain\r\nContent-Length: 13\r\n\r\n".
+                "Hello, world!"
+            );
+            fclose($client);
+        });
+    }
+});
+EOF
+php /tmp/server-test/server.php & node server.js & php /tmp/server-test/server-async.php;
